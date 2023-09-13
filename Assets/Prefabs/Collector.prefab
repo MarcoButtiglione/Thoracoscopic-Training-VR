@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 6285381564270234323}
   - component: {fileID: 308478723183397398}
   - component: {fileID: 5171033531599918113}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: Collector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,15 +301,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: 1
+  _shape: 4
+  _collectorMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  _errorClip: {fileID: 8300000, guid: f9bd78177075d47428906788154c6bc6, type: 3}
+  _goodClip: {fileID: 8300000, guid: d71ade59f64c2a84282505576afacb86, type: 3}
   _lightBulb: {fileID: 322900620655037164}
   _lightBulbIdle: {fileID: 2100000, guid: 388d0c75010b7db4ba490890a1294aa3, type: 2}
   _lightBulbeWrong: {fileID: 2100000, guid: 00cf121cdc19a6e4796c2dc738c06b6c, type: 2}
   _lightBulbSolved: {fileID: 2100000, guid: a46778e45c3ab694fa0c728ea9b080bc, type: 2}
-  _errorClip: {fileID: 8300000, guid: f9bd78177075d47428906788154c6bc6, type: 3}
-  _goodClip: {fileID: 8300000, guid: d71ade59f64c2a84282505576afacb86, type: 3}
-  _collectorMask:
-    serializedVersion: 2
-    m_Bits: 1024
 --- !u!65 &308478723183397398
 BoxCollider:
   m_ObjectHideFlags: 0

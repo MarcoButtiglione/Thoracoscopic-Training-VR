@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8171305096843671533}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: SnapOffset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 2181238318469090746}
   - component: {fileID: 5213457016930348823}
   - component: {fileID: 7651693149733781799}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: SingleCollector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,10 +92,11 @@ MonoBehaviour:
   _shape: 0
   _collectorMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 2097152
   _errorClip: {fileID: 8300000, guid: f9bd78177075d47428906788154c6bc6, type: 3}
   _goodClip: {fileID: 8300000, guid: d71ade59f64c2a84282505576afacb86, type: 3}
   _enableSnapGuide: 0
+  _snapOpacity: 0.5
   _smoothSnap: 1
   _smoothSnapDuration: 0.25
   _snapOffset: {fileID: 8171305096843671533}

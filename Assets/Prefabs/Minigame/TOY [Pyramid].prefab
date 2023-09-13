@@ -468,7 +468,7 @@ GameObject:
   - component: {fileID: 2635710268582863580}
   - component: {fileID: 9209517281892185024}
   - component: {fileID: 694257180}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: TOY [Pyramid]
   m_TagString: Untagged
   m_Icon: {fileID: 0}

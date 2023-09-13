@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4226904005199290373}
   - component: {fileID: 6788641821862946109}
   - component: {fileID: 1586283135757533846}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: TOY [TinyCube]
   m_TagString: Untagged
   m_Icon: {fileID: 0}

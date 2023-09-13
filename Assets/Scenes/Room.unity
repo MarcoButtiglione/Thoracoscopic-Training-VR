@@ -189,11 +189,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Collector (3)
       objectReference: {fileID: 0}
-    - target: {fileID: 899404285042765280, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
-        type: 3}
-      propertyPath: m_Layer
-      value: 11
-      objectReference: {fileID: 0}
     - target: {fileID: 2754078764983659889, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2211,11 +2206,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Collector (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 899404285042765280, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
-        type: 3}
-      propertyPath: m_Layer
-      value: 11
-      objectReference: {fileID: 0}
     - target: {fileID: 2754078764983659889, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2904,11 +2894,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ToyShapeCollector
-      objectReference: {fileID: 0}
-    - target: {fileID: 4096687320633764667, guid: b83d138b4e16ce343b48c7238d2d8cfd,
-        type: 3}
-      propertyPath: m_Layer
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4209512733464083345, guid: b83d138b4e16ce343b48c7238d2d8cfd,
         type: 3}
@@ -4882,11 +4867,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Collector
-      objectReference: {fileID: 0}
-    - target: {fileID: 899404285042765280, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
-        type: 3}
-      propertyPath: m_Layer
-      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 2754078764983659889, guid: d3f78482ee0cd85438b1e476e7b4c5a8,
         type: 3}

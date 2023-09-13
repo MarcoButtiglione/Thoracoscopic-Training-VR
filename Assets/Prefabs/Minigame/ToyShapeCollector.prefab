@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 305770131022659108}
   - component: {fileID: 2583561064223820526}
   - component: {fileID: 290702411243186425}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: ToyShapeCollector
   m_TagString: Untagged
   m_Icon: {fileID: 0}

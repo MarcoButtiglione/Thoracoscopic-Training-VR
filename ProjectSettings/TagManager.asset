@@ -18,7 +18,8 @@ TagManager:
   - IndexInteractions
   - InsertablesInteractions
   - GraspInteractions
-  - MinigameCollector
+  - DefKitMeshColliders
+  - DefKitNodes
   - 
   - 
   - 
@@ -27,8 +28,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - MigameCollector
   - 
   - 
   - 

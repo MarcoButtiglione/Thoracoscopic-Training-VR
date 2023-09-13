@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 674166412080646284}
   - component: {fileID: 1167092960723527487}
   - component: {fileID: 45285687440624405}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Collector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ MonoBehaviour:
   _shape: 3
   _collectorMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 2097152
   _errorClip: {fileID: 8300000, guid: f9bd78177075d47428906788154c6bc6, type: 3}
   _goodClip: {fileID: 8300000, guid: d71ade59f64c2a84282505576afacb86, type: 3}
   _lightBulb: {fileID: 2686603666567615782}

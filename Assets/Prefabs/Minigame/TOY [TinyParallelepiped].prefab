@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3392629008276223520}
   - component: {fileID: 3392629008276223527}
   - component: {fileID: 3392629008276223526}
-  m_Layer: 11
+  m_Layer: 21
   m_Name: TOY [TinyParallelepiped]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
