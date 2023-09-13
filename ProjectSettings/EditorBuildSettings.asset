@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Room.unity
+    guid: 1dc317b4eef70b1459e127a259375af0
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/Scenes/Logger.unity
+    guid: 9d72f26dfda7a3147a808e8d01efedac
+  - enabled: 0
+    path: Assets/Scenes/SnapExercise.unity
+    guid: c874f2050aa6c03489130ebbe70b1c64
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 353414bfd131a5f4c87929e00061158a,
+      type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 8f6af9cdfe8bf124ca81f56358abf8ec,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 02b71674d6a1f2648a10b2bb963aa720,
+      type: 2}
