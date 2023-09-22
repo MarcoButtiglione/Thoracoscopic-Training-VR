@@ -34,7 +34,7 @@ public class FilterUpdater : MonoBehaviour
         {
             _meshFiltered.vertices = _meshUnFiltered.vertices;
         }
-        
+            
 
         _meshFiltered.RecalculateNormals();
         _meshFiltered.RecalculateBounds();
