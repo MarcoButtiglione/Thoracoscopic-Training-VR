@@ -8,9 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Room.unity
     guid: 1dc317b4eef70b1459e127a259375af0
+  - enabled: 1
+    path: Assets/Scenes/Soft Room.unity
+    guid: 81a3ac8cbfd4ffd49a031fe40075b793
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000

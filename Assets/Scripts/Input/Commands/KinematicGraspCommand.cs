@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using MinigameSystem;
+using XPBD_Engine.Scripts.Physics.Grabber;
 
 public class KinematicGraspCommand : BaseCommand
 {
@@ -10,6 +11,7 @@ public class KinematicGraspCommand : BaseCommand
     public float sensitivity = 0.1f;
     public Transform graspZoneTransform;
     public KinematicGraspZone graspZone;
+    public GrabberSphereController grabberSphereController;
 
     private void Awake()
     {
@@ -24,10 +26,14 @@ public class KinematicGraspCommand : BaseCommand
         if (value > sensitivity)
         {
             HandleGrasp();
+            grabberSphereController.StartGrabbing();
+            //print("PRESO");
         }
         else
         {
             ReleaseGraspable();
+            grabberSphereController.EndGrabbing();
+            //print("LASCIATO");
         }
     }
 
