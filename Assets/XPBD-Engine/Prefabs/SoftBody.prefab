@@ -54,7 +54,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 432995caf5c93a549873abe55aa111e9, type: 2}
+  - {fileID: 2100000, guid: e0d41a3569f986c4f965c950d13cfe52, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modelJson: {fileID: 4900000, guid: 814d9dd3eaa143c4a4217f6a332f132f, type: 3}
-  tetMesh:
+  tetVisMesh:
     name: 
     verts: []
     tetIds: 
@@ -106,3 +106,4 @@ MonoBehaviour:
   meshScale: 1
   edgeCompliance: 0
   volCompliance: 0
+  staticSides: []

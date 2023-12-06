@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using XPBD_Engine.Scripts.Physics.Grabber.Interfaces;
 using XPBD_Engine.Scripts.Utilities;
 using XPBD_Engine.Scripts.Utilities.Data_structures;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace XPBD_Engine.Scripts.Physics.SoftBody
 {
@@ -19,9 +23,9 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		public float meshScale = 1f;
 		[Range(0f,500f)]public float edgeCompliance= 100.0f;
 		[Range(0f,500f)]public float volCompliance = 0.0f;
-		public bool isBaseStatic;
-
+		public List<StaticSide> staticSides;
 		//------------------------------
+		private Vector3 _initPosition;
 		//The Unity mesh to display the soft body mesh
 		private Mesh _mesh;
 		//Physics variables
@@ -73,6 +77,12 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		#region MonoBehaviour
 		void Start()
 		{
+			StartSoftBody();
+			InitMesh();
+		}
+
+		private void StartSoftBody()
+		{
 			tetVisMesh = JsonUtility.FromJson<TetVisMesh>(modelJson.text);
 			_numParticles = tetVisMesh.verts.Length / 3;
 			_numTets = tetVisMesh.tetIds.Length / 4;
@@ -106,12 +116,16 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		
 
 			InitPhysics();
-		
-			Translate(gameObject.transform.position);
+
+			_initPosition = gameObject.transform.position;
+			Translate(_initPosition);
 			gameObject.transform.position = Vector3.zero;
 
-			InitMesh();
-
+			
+		
+			//_grabId = -1; 
+			//_grabInvMass = 0.0f;
+			_grabbedVertices = new List<GrabbedVertex>();
 			_volIdOrder = new[]
 			{
 				new[] { 1, 3, 2 },
@@ -119,11 +133,8 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 				new[] { 0, 3, 1 },
 				new[] { 0, 1, 2 }
 			};
-		
-			//_grabId = -1; 
-			//_grabInvMass = 0.0f;
-			_grabbedVertices = new List<GrabbedVertex>();
 		}
+		
 		private void OnDestroy()
 		{
 			Destroy(_mesh);
@@ -171,9 +182,9 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 				_restEdgeLengths[i] = Vector3.Distance(_pos[id0], _pos[id1]);
 			}
 
-			if (isBaseStatic)
+			if (staticSides.Count>0)
 			{
-				SetBaseStatic();
+				SetStatic();
 			}
 		}
 
@@ -185,15 +196,80 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		{
 			return _invMass[index] == 0f;
 		}
-		private void SetBaseStatic()
+		private void SetStatic()
 		{
+			var posOrderByDescendingX = _pos.OrderByDescending(v => v.x);
+			var posOrderByDescendingY = _pos.OrderByDescending(v => v.y);
+			var posOrderByDescendingZ = _pos.OrderByDescending(v => v.z);
+
+			var minX = posOrderByDescendingX.Last().x;
+			var maxX = posOrderByDescendingX.First().x;
+			var minY = posOrderByDescendingY.Last().y;
+			var maxY = posOrderByDescendingY.First().y;
+			var minZ = posOrderByDescendingZ.Last().z;
+			var maxZ = posOrderByDescendingZ.First().z;
+
 			for (int i = 0; i < _numParticles; i++)
 			{
-				if (_pos[i].y<0.1f)
+				var toSetStatic = false;
+				foreach (var staticSide in staticSides)
 				{
-					SetVertexStatic(i);
+					if(toSetStatic) continue;
+					switch (staticSide.axis)
+					{
+						case AxisS.X:
+							if (staticSide.isPositiveSide)
+							{
+								if (_pos[i].x>maxX - staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							else
+							{
+								if (_pos[i].x<minX + staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							break;
+						case AxisS.Y:
+							if (staticSide.isPositiveSide)
+							{
+								if (_pos[i].y>maxY - staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							else
+							{
+								if (_pos[i].y<minY + staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							break;
+						case AxisS.Z:
+							if (staticSide.isPositiveSide)
+							{
+								if (_pos[i].z>maxZ - staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							else
+							{
+								if (_pos[i].z<minZ + staticSide.amount)
+								{
+									toSetStatic = true;
+								}
+							}
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
 				}
-				
+				if(toSetStatic) SetVertexStatic(i);
 			}
 		}
 		
@@ -415,6 +491,12 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 
 			UpdateMeshes();
 		}
+
+		public void RestartSoftBody()
+		{
+			gameObject.transform.position=_initPosition ;
+			StartSoftBody();
+		}
 		#endregion
 		
 		#region Grabber
@@ -505,7 +587,21 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 	}
 }
 
+[Serializable]
+public enum AxisS
+{
+	X,
+	Y,
+	Z
+}
 
+[Serializable]
+public class StaticSide
+{
+	public AxisS axis;
+	public bool isPositiveSide;
+	[Range(0f,3f)] public float amount;
+}
 
 
 
