@@ -36,6 +36,13 @@ namespace XPBD_Engine.Scripts.Physics
             {
                 paused = !paused;
             }
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                foreach (var softBody in _classicSoftBodies)
+                {
+                    softBody.RestartSoftBody();
+                }
+            }
         }
         private void FixedUpdate()
         {
@@ -95,6 +102,11 @@ namespace XPBD_Engine.Scripts.Physics
         public IEnumerable<SoftBodyClassic> GetSoftBodies()
         {
             return _classicSoftBodies;
+        }
+
+        public void SwitchPaused()
+        {
+            paused = !paused;
         }
     }
 }

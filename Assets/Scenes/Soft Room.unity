@@ -4202,7 +4202,7 @@ PrefabInstance:
         type: 3}
       propertyPath: modelJson
       value: 
-      objectReference: {fileID: 4900000, guid: c67d3d86b2d0c1646bcf47ef065b5f77, type: 3}
+      objectReference: {fileID: 4900000, guid: 3136430cf2b4db24ca1b17899c002362, type: 3}
     - target: {fileID: 2530494586524191216, guid: fac81c21e34a88a4196eb0b458fefbd1,
         type: 3}
       propertyPath: meshScale
@@ -4268,6 +4268,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7224793812800432642, guid: fac81c21e34a88a4196eb0b458fefbd1,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 52833415372c69e4faaaa437d63709e8, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fac81c21e34a88a4196eb0b458fefbd1, type: 3}
 --- !u!1001 &1901292914

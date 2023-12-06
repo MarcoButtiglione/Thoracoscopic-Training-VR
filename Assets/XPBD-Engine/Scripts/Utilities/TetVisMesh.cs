@@ -5,8 +5,12 @@ namespace XPBD_Engine.Scripts.Utilities
     {
         public string name;
         public float[] verts;
+        public float[] uvs;
         public int[] tetIds;
         public int[] tetEdgeIds;
         public int[] tetSurfaceTriIds;
+        public int[] tetSurfaceTriUvIds;
+        public int[] tetSurfaceVertexUvIds;
+        public int[] vertexUvList;
     }
 }
