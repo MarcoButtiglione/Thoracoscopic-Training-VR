@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4721392478864895634}
   - component: {fileID: 2872764625938990747}
-  - component: {fileID: 2177017463335042606}
   m_Layer: 0
   m_Name: PhysicalWorld
   m_TagString: Untagged
@@ -46,27 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: {x: 0, y: -10, z: 0}
-  worldCollider: {fileID: 2177017463335042606}
-  numSubsteps: 5
+  worldBoundType: 0
+  worldBoundSize: {x: 10, y: 3, z: 10}
+  worldBoundCenter: {x: 0, y: 1.5, z: 0}
+  worldBoundRadius: 4.83
+  numSubsteps: 10
   paused: 0
---- !u!65 &2177017463335042606
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5261516015708697961}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10, y: 3, z: 10}
-  m_Center: {x: 0, y: 1.5, z: 0}

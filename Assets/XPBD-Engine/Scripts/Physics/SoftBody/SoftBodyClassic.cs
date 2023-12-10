@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using KinematicMechanism.Utils;
 using UnityEngine;
-using UnityEngine.Serialization;
 using XPBD_Engine.Scripts.Physics.Grabber.Interfaces;
 using XPBD_Engine.Scripts.Utilities;
 using XPBD_Engine.Scripts.Utilities.Data_structures;
-using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace XPBD_Engine.Scripts.Physics.SoftBody
 {
@@ -87,14 +86,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 			_numParticles = tetVisMesh.verts.Length / 3;
 			_numTets = tetVisMesh.tetIds.Length / 4;
 			
-			var temp = new Vector3[_numParticles];
-			for (var i = 0; i < _numParticles; i++)
-			{
-				var a = i * 3;
-				var tempVect = new Vector3(tetVisMesh.verts[a], tetVisMesh.verts[a + 1], tetVisMesh.verts[a + 2])*meshScale;
-				temp[i] = tempVect;
-			}
-			_pos = temp;
+			_pos = GetPosFromTetMesh(tetVisMesh.verts);
 			//Particle previous position
 			//Not needed because is already set to 0s
 			_prevPos = new Vector3[_numParticles];
@@ -139,6 +131,30 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		{
 			Destroy(_mesh);
 		}
+		private void OnDrawGizmos()
+		{
+			if (Application.isPlaying) return;
+			if(modelJson==null) return;
+			var tetVisMesh = JsonUtility.FromJson<TetVisMesh>(modelJson.text);
+			var pos = GetPosFromTetMesh(tetVisMesh.verts);
+			// Draw a yellow sphere at the transform's position
+			Gizmos.DrawMesh(GetMesh(tetVisMesh,pos),transform.position);
+
+
+		}
+
+		private Vector3[] GetPosFromTetMesh(float[] vertices)
+		{
+			var numParticles = vertices.Length / 3;
+			var pos = new Vector3[numParticles];
+			for (var i = 0; i < numParticles; i++)
+			{
+				var a = i * 3;
+				var tempVect = new Vector3(vertices[a], vertices[a + 1], vertices[a + 2])*meshScale;
+				pos[i] = tempVect;
+			}
+			return pos; 
+		}
 		#endregion
 		
 		#region Mesh
@@ -148,30 +164,36 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		//Init the mesh when the simulation is started
 		private void InitMesh()
 		{
-			_mesh = new Mesh();
+			_mesh = GetMesh(tetVisMesh,_pos);
 			GetComponent<MeshFilter>().mesh = _mesh;
-			_mesh.Clear();
+		}
 
-			var vertices = new Vector3[tetVisMesh.vertexUvList.Length/2];
-			var uvs = new Vector2[tetVisMesh.vertexUvList.Length/2];
-			var triangles = tetVisMesh.tetSurfaceVertexUvIds;
+		private Mesh GetMesh(TetVisMesh tetMesh, IReadOnlyList<Vector3> vertexPositions)
+		{
+			var mesh = new Mesh();
+			mesh.Clear();
 
-			var meshUvs = new Vector2[tetVisMesh.uvs.Length / 2];
-			for (int i = 0; i < tetVisMesh.uvs.Length/2; i++)
+			var vertices = new Vector3[tetMesh.vertexUvList.Length/2];
+			var uvs = new Vector2[tetMesh.vertexUvList.Length/2];
+			var triangles = tetMesh.tetSurfaceVertexUvIds;
+
+			var meshUvs = new Vector2[tetMesh.uvs.Length / 2];
+			for (int i = 0; i < tetMesh.uvs.Length/2; i++)
 			{
-				meshUvs[i] = new Vector2(tetVisMesh.uvs[2 * i], tetVisMesh.uvs[2 * i + 1]);
+				meshUvs[i] = new Vector2(tetMesh.uvs[2 * i], tetMesh.uvs[2 * i + 1]);
 			}
-			for (int i = 0; i < tetVisMesh.vertexUvList.Length/2; i++)
+			for (int i = 0; i < tetMesh.vertexUvList.Length/2; i++)
 			{
-				vertices[i] = _pos[tetVisMesh.vertexUvList[2 * i + 0]];
-				uvs[i] = meshUvs[tetVisMesh.vertexUvList[2 * i + 1]];
+				vertices[i] = vertexPositions[tetMesh.vertexUvList[2 * i + 0]];
+				uvs[i] = meshUvs[tetMesh.vertexUvList[2 * i + 1]];
 			}
-			_mesh.vertices = vertices;
-			_mesh.uv = uvs;
-			_mesh.triangles = triangles;
+			mesh.vertices = vertices;
+			mesh.uv = uvs;
+			mesh.triangles = triangles;
 			
-			_mesh.RecalculateBounds();
-			_mesh.RecalculateNormals();
+			mesh.RecalculateBounds();
+			mesh.RecalculateNormals();
+			return mesh;
 		}
 		private void UpdateMeshes() 
 		{
@@ -239,7 +261,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 					if(toSetStatic) continue;
 					switch (staticSide.axis)
 					{
-						case AxisSide.X:
+						case Axis.X:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].x>maxX - staticSide.amount)
@@ -255,7 +277,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisSide.Y:
+						case Axis.Y:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].y>maxY - staticSide.amount)
@@ -271,7 +293,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisSide.Z:
+						case Axis.Z:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].z>maxZ - staticSide.amount)
@@ -296,7 +318,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		}
 		
 		//Move the particles and handle environment collision
-		public void PreSolve(float dt, Vector3 gravity,Vector3 worldBoxMax,Vector3 worldBoxMin )
+		public void PreSolve(float dt, Vector3 gravity, WorldBoundType boundType,Vector3 worldBoundCenter,Vector3 worldBoundSize,float worldSphereRadius)
 		{
 			//For each particle
 			for (var i = 0; i < _numParticles; i++) {
@@ -309,11 +331,30 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 				_prevPos[i] = _pos[i];
 				//Update pos
 				_pos[i] += _vel[i] * dt;
-				EnvironmentCollision(i,worldBoxMax,worldBoxMin);
+				EnvironmentCollision(boundType,i,worldBoundSize,worldBoundCenter,worldSphereRadius);
 			}
 		}
 		//Collision with invisible walls and floor
-		private void EnvironmentCollision(int i,Vector3 worldBoxMax,Vector3 worldBoxMin)
+		private void EnvironmentCollision(WorldBoundType boundType,int i,Vector3 worldBoundSize,Vector3 worldBoundCenter,float worldSphereRadius)
+		{
+			switch(boundType) {
+				case WorldBoundType.None:
+					break;
+				case WorldBoundType.Cube:
+					var worldBoxMin = worldBoundCenter - worldBoundSize / 2.0f;
+					var worldBoxMax = worldBoundCenter + worldBoundSize / 2.0f;
+					HandleBoxWorldCollision(i,worldBoxMax,worldBoxMin);
+					break;
+				case WorldBoundType.Sphere:
+					HandleSphereWorldCollision(i, worldBoundCenter, worldSphereRadius);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(boundType), boundType, null);
+			}
+
+		}
+
+		private void HandleBoxWorldCollision(int i,Vector3 worldBoxMax,Vector3 worldBoxMin)
 		{
 			//Floor collision
 			var x = _pos[i].x;
@@ -335,9 +376,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 			//Y
 			if (y < worldBoxMin.y)
 			{
-				//Set the pos to previous pos
 				_pos[i] = _prevPos[i];
-				//But the y of the previous pos should be at the ground
 				_pos[i].y = worldBoxMin.y;
 			}
 			else if (y > worldBoxMax.y)
@@ -358,6 +397,21 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 				_pos[i].z = worldBoxMax.z;
 			}
 		}
+		private void HandleSphereWorldCollision(int i,Vector3 worldBoundCenter,float worldSphereRadius)
+		{
+			var distance = Vector3.Distance(worldBoundCenter, _pos[i]);
+
+			if (distance>worldSphereRadius)
+			{
+				_pos[i] = _prevPos[i];
+				var dir = _pos[i] - worldBoundCenter;
+				dir.Normalize();
+
+				_pos[i] = worldBoundCenter + dir * worldSphereRadius;
+			}
+
+		}
+
 		//Handle the soft body physics
 		public void Solve(float dt)
 		{
@@ -609,18 +663,12 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 	}
 }
 
-[Serializable]
-public enum AxisSide
-{
-	X,
-	Y,
-	Z
-}
+
 
 [Serializable]
 public class StaticSide
 {
-	public AxisSide axis;
+	public Axis axis;
 	public bool isPositiveSide;
 	[Range(0f,3f)] public float amount;
 }

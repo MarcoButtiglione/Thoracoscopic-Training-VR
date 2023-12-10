@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
+using XPBD_Engine.Scripts.Physics;
 using XPBD_Engine.Scripts.Physics.RigidBody;
 using XPBD_Engine.Scripts.Physics.SoftBody;
 
@@ -8,27 +12,24 @@ namespace XPBD_Engine.Scripts.Physics
     public class PhysicalWorld : MonoBehaviour
     {
         public Vector3 gravity;
-        public BoxCollider worldCollider;
-        private Vector3 _worldBoxMin;
-        private Vector3 _worldBoxMax;
+        public WorldBoundType worldBoundType;
+        public Vector3 worldBoundSize;
+        public Vector3 worldBoundCenter;
+        public float worldBoundRadius;
         public int numSubsteps = 10;
         public bool paused;
-
+        
+        
         private SoftBodyClassic[] _classicSoftBodies;
         private SoftBodyAdvanced[] _advancedSoftBodies;
         private Ball[] _balls;
 
-        private bool _isPressedJump;
-        private bool _isPressedSqueeze;
+        
         private void Start()
         {
             _classicSoftBodies = FindObjectsOfType<SoftBodyClassic>();
             _advancedSoftBodies = FindObjectsOfType<SoftBodyAdvanced>();
             _balls = FindObjectsOfType<Ball>();
-            var worldSize = worldCollider.size;
-            var worldCenter =worldCollider.center;
-            _worldBoxMin = worldCenter - worldSize / 2.0f;
-            _worldBoxMax = worldCenter + worldSize / 2.0f;
         }
         private void Update()
         {
@@ -48,13 +49,32 @@ namespace XPBD_Engine.Scripts.Physics
         {
             Simulate();
         }
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            switch (worldBoundType)
+            {
+                case WorldBoundType.Cube:
+                    Gizmos.DrawWireCube(worldBoundCenter, worldBoundSize);
+                    break;
+                case WorldBoundType.Sphere:
+                    Gizmos.DrawWireSphere(worldBoundCenter, worldBoundRadius);
+                    break;
+                case WorldBoundType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }    
 
     
         private void Simulate()
         {
             if (paused)
                 return;
-
+            
+            
+            
             var sdt = Time.fixedDeltaTime / numSubsteps;
             HandleSimulationSoftBodyClassic(sdt);
             HandleSimulationSoftBodyAdvanced(sdt);
@@ -66,7 +86,7 @@ namespace XPBD_Engine.Scripts.Physics
                 return;
             for (var step = 0; step < numSubsteps; step++) {
                 for (var i = 0; i < _classicSoftBodies.Length; i++) 
-                    _classicSoftBodies[i].PreSolve(sdt, gravity,_worldBoxMax,_worldBoxMin);
+                    _classicSoftBodies[i].PreSolve(sdt, gravity,worldBoundType,worldBoundCenter,worldBoundSize,worldBoundRadius);
 					
                 for (var i = 0; i < _classicSoftBodies.Length; i++) 
                     _classicSoftBodies[i].Solve(sdt);
@@ -81,7 +101,7 @@ namespace XPBD_Engine.Scripts.Physics
                 return;
             for (var step = 0; step < numSubsteps; step++) {
                 for (var i = 0; i < _advancedSoftBodies.Length; i++) 
-                    _advancedSoftBodies[i].PreSolve(sdt, gravity,_worldBoxMax,_worldBoxMin);
+                    _advancedSoftBodies[i].PreSolve(sdt, gravity,worldBoundSize,worldBoundCenter);
 					
                 for (var i = 0; i < _advancedSoftBodies.Length; i++) 
                     _advancedSoftBodies[i].Solve(sdt);
@@ -97,7 +117,7 @@ namespace XPBD_Engine.Scripts.Physics
             if (_balls.Length ==0)
                 return;
             for (var i = 0; i < _balls.Length; i++)
-                _balls[i].Simulate(gravity,Time.fixedDeltaTime,_worldBoxMax);
+                _balls[i].Simulate(gravity,Time.fixedDeltaTime,worldBoundSize);
         }
         public IEnumerable<SoftBodyClassic> GetSoftBodies()
         {
@@ -109,4 +129,12 @@ namespace XPBD_Engine.Scripts.Physics
             paused = !paused;
         }
     }
+}
+
+
+public enum WorldBoundType
+{
+    None,
+    Cube,
+    Sphere
 }
