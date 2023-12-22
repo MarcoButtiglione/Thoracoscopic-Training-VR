@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 using XPBD_Engine.Scripts.Physics;
 using XPBD_Engine.Scripts.Physics.RigidBody;
 using XPBD_Engine.Scripts.Physics.SoftBody;
+using XPBD_Engine.Scripts.Utilities;
 
 namespace XPBD_Engine.Scripts.Physics
 {
@@ -16,6 +17,8 @@ namespace XPBD_Engine.Scripts.Physics
         public Vector3 worldBoundSize;
         public Vector3 worldBoundCenter;
         public float worldBoundRadius;
+        public Vector3 worldCapsulePos1;
+        public Vector3 worldCapsulePos2;
         public int numSubsteps = 10;
         public bool paused;
         
@@ -60,10 +63,14 @@ namespace XPBD_Engine.Scripts.Physics
                 case WorldBoundType.Sphere:
                     Gizmos.DrawWireSphere(worldBoundCenter, worldBoundRadius);
                     break;
+                case WorldBoundType.Capsule:
+                    CustomGizmo.DrawWireCapsule(worldCapsulePos1,worldCapsulePos2, worldBoundRadius);
+                    break;
                 case WorldBoundType.None:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+                
             }
         }    
 
@@ -86,7 +93,7 @@ namespace XPBD_Engine.Scripts.Physics
                 return;
             for (var step = 0; step < numSubsteps; step++) {
                 for (var i = 0; i < _classicSoftBodies.Length; i++) 
-                    _classicSoftBodies[i].PreSolve(sdt, gravity,worldBoundType,worldBoundCenter,worldBoundSize,worldBoundRadius);
+                    _classicSoftBodies[i].PreSolve(sdt, gravity,worldBoundType,worldBoundCenter,worldBoundSize,worldBoundRadius,worldCapsulePos1,worldCapsulePos2);
 					
                 for (var i = 0; i < _classicSoftBodies.Length; i++) 
                     _classicSoftBodies[i].Solve(sdt);
@@ -136,5 +143,6 @@ public enum WorldBoundType
 {
     None,
     Cube,
-    Sphere
+    Sphere,
+    Capsule
 }

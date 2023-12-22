@@ -168,5 +168,22 @@ namespace XPBD_Engine.Scripts.Utilities
             distanceFromCenter = Vector3.Distance(centerSphere, vert);
             return distanceFromCenter <= radiusSphere;
         }
+        
+        public static Vector3 GetClosestPointOnSegment(Vector3 a, Vector3 segmentStart, Vector3 segmentEnd)
+        {
+            var segmentLength = Vector3.Distance(segmentStart, segmentEnd);
+
+            if (segmentLength == 0)
+            {
+                return segmentStart;
+            }
+
+            // Calcolo il parametro t (0 <= t <= 1) per rappresentare il punto sul segmento
+            var t = Mathf.Clamp01(Vector3.Dot(a - segmentStart, segmentEnd - segmentStart) / Mathf.Pow(segmentLength, 2));
+
+            var closest = segmentStart + t * (segmentEnd - segmentStart);
+
+            return closest ;
+        }
     }
 }
