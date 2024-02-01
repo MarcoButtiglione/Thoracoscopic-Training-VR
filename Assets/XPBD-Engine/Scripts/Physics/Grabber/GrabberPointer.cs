@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XPBD_Engine.Scripts.Managers;
 using XPBD_Engine.Scripts.Physics.Grabber.Interfaces;
 using XPBD_Engine.Scripts.Utilities.Data_structures;
 
@@ -22,6 +23,7 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
         public GrabberPointer(Camera mainCamera)
         {
             _mainCamera = mainCamera;
+            
         }
         
         public void StartGrab(List<IGrabbable> bodies)
@@ -71,6 +73,10 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
         
                 //StartGrab is finding the closest vertex and setting it to the position where the ray hit the triangle
                 _indexGrabbedBody = closestBody.StartGrab(closestHit.location);
+                if (ActivityManager.instance != null)
+                {
+                    ActivityManager.instance.StartGrabbingVertex(_indexGrabbedBody);
+                }
 
                 _lastGrabPos = closestHit.location;
 

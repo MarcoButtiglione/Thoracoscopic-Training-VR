@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XPBD_Engine.Scripts.Managers;
 using XPBD_Engine.Scripts.Physics.Grabber.Interfaces;
 using XPBD_Engine.Scripts.Utilities.Data_structures;
 
@@ -41,6 +42,10 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
             _grabbedBodyVertex = new GrabbedBodyVertex(closestBody,bestVertexIndex);
             _grabbedBodyVertex.Value.grabbedBody.StartGrabVertex(_centerPos,bestVertexIndex);
             _lastGrabPos = _centerPos;
+            if (ActivityManager.instance != null)
+            {
+                ActivityManager.instance.StartGrabbingVertex(bestVertexIndex);
+            }
 
         }
 

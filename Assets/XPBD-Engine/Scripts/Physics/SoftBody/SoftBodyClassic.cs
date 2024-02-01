@@ -275,7 +275,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 					if(toSetStatic) continue;
 					switch (staticSide.axis)
 					{
-						case AxisSoft.X:
+						case AxisXPBD.X:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].x>maxX - staticSide.amount)
@@ -291,7 +291,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisSoft.Y:
+						case AxisXPBD.Y:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].y>maxY - staticSide.amount)
@@ -307,7 +307,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisSoft.Z:
+						case AxisXPBD.Z:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].z>maxZ - staticSide.amount)
@@ -689,11 +689,19 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 		}
 		#endregion
 
+		public Vector3 GetVertexPos(int index)
+		{
+			return _pos[index];
+		}
+		public Vector3 GetVertexNorm(int index)
+		{
+			return _mesh.normals[index];
+		}
 	}
 }
 
 [Serializable]
-public enum AxisSoft
+public enum AxisXPBD
 {
 	X,
 	Y,
@@ -703,7 +711,7 @@ public enum AxisSoft
 [Serializable]
 public class StaticSide
 {
-	public AxisSoft axis;
+	public AxisXPBD axis;
 	public bool isPositiveSide;
 	[Range(0f,3f)] public float amount;
 }

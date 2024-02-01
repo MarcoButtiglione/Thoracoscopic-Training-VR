@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6865993979543547370
+--- !u!1 &8254872722597657656
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 345956126681079857}
-  - component: {fileID: 4479942551917725841}
+  - component: {fileID: 7633535795921382641}
+  - component: {fileID: 3675878237606617836}
   m_Layer: 0
-  m_Name: Grabber
+  m_Name: ActivityManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &345956126681079857
+--- !u!4 &7633535795921382641
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6865993979543547370}
+  m_GameObject: {fileID: 8254872722597657656}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.1957495, y: 3.3945866, z: -6.195177}
+  m_LocalPosition: {x: -1.0536902, y: -0.5398082, z: -2.655372}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4479942551917725841
+--- !u!114 &3675878237606617836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6865993979543547370}
+  m_GameObject: {fileID: 8254872722597657656}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fad0b6ed3b61c149b285018a69b935f, type: 3}
+  m_Script: {fileID: 11500000, guid: 18ced4b0c8aba1b4fa1cde306306a01e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorTexture: {fileID: 2800000, guid: 9502229508e68b04da8f92de5b1bd292, type: 3}
-  physicalWorld: {fileID: 0}
+  selectionSpherePrefab: {fileID: 8848634703576631548, guid: 2ade2038ab10d4b4d81975cabd388d30, type: 3}
+  softbodyActivity: {fileID: 0}
+  activitySettings: {fileID: 11400000, guid: 8e53d141ae78a02429b6654cff4d4706, type: 2}

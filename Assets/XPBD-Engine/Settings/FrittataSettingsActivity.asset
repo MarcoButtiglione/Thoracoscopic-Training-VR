@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 392d85e46e0d4e78846cb5ff2cef3c6c, type: 3}
+  m_Name: FrittataSettingsActivity
+  m_EditorClassIdentifier: 
+  vertexIndices: d60000003b000000810000003a0000003700000001000000430100001e0000001c000000a8000000ec0000002e0000002b0000007800000029000000de0000002b010000a5000000540100000b0000000900000070010000
+  grabbingDistance: 0.05
