@@ -12,28 +12,32 @@ namespace XPBD_Engine.Scripts.Physics
 {
     public class PhysicalWorld : MonoBehaviour
     {
-        public Vector3 gravity;
-        public WorldBoundType worldBoundType;
-        public Vector3 worldBoundSize;
-        public Vector3 worldBoundCenter;
-        public float worldBoundRadius;
-        public Vector3 worldCapsulePos1;
-        public Vector3 worldCapsulePos2;
-        public int numSubsteps = 10;
-        public bool paused;
-        
+        public static PhysicalWorld instance;
+
+        public Vector3 gravity;                         //The gravity of the world
+        public WorldBoundType worldBoundType;           //The type of the world bound
+        public Vector3 worldBoundSize;                  //The size of the world bound
+        public Vector3 worldBoundCenter;                //The center of the world bound
+        public float worldBoundRadius;                  //The radius of the world bound
+        public Vector3 worldCapsulePos1;                //The first position of the capsule
+        public Vector3 worldCapsulePos2;                //The second position of the capsule
+        public int numSubsteps = 10;                    //The number of substeps
+        public bool paused;                             //If the simulation is paused
         
         private SoftBodyClassic[] _classicSoftBodies;
-        private SoftBodyAdvanced[] _advancedSoftBodies;
-        private Ball[] _balls;
-
+        //private SoftBodyAdvanced[] _advancedSoftBodies;
+        //private Ball[] _balls;
         
-        private void Start()
+        private void OnEnable()
         {
+            instance = this;
             _classicSoftBodies = FindObjectsOfType<SoftBodyClassic>();
-            _advancedSoftBodies = FindObjectsOfType<SoftBodyAdvanced>();
-            _balls = FindObjectsOfType<Ball>();
         }
+        private void OnDisable()
+        {
+            instance = null;
+        }
+        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.P))
@@ -84,8 +88,8 @@ namespace XPBD_Engine.Scripts.Physics
             
             var sdt = Time.fixedDeltaTime / numSubsteps;
             HandleSimulationSoftBodyClassic(sdt);
-            HandleSimulationSoftBodyAdvanced(sdt);
-            HandleSimulationBalls();
+            //HandleSimulationSoftBodyAdvanced(sdt);
+            //HandleSimulationBalls();
         }
         private void HandleSimulationSoftBodyClassic(float sdt)
         {
@@ -102,6 +106,8 @@ namespace XPBD_Engine.Scripts.Physics
                     _classicSoftBodies[i].PostSolve(sdt);
             }
         }
+        /*
+         
         private void HandleSimulationSoftBodyAdvanced(float sdt)
         {
             if (_advancedSoftBodies.Length ==0)
@@ -126,6 +132,7 @@ namespace XPBD_Engine.Scripts.Physics
             for (var i = 0; i < _balls.Length; i++)
                 _balls[i].Simulate(gravity,Time.fixedDeltaTime,worldBoundSize);
         }
+        */
         public IEnumerable<SoftBodyClassic> GetSoftBodies()
         {
             return _classicSoftBodies;

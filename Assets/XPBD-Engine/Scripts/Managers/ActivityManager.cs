@@ -21,15 +21,18 @@ namespace XPBD_Engine.Scripts.Managers
 
         private void Awake()
         {
-            if (instance == null)
-            {
-                instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
             HandleErrors();
+        }
+        private void OnEnable()
+        {
+            instance = this;
+        }
+        private void OnDisable()
+        {
+            _isActivityRunning = false;
+            Destroy(_selectionSphere);
+            _currentSelectedVertexIndex = 0;
+            instance = null;
         }
         private void Update()
         {

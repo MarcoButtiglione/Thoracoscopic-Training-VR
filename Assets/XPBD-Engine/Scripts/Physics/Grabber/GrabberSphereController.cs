@@ -7,21 +7,12 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
 {
     public class GrabberSphereController : MonoBehaviour
     {
-        private PhysicalWorld _physicalWorld;
         public float colliderRadius;
         private GrabberSphere _grabber;
         
         private void Start()
         {
             _grabber = new GrabberSphere(transform.position,colliderRadius);
-            if (FindObjectsOfType<PhysicalWorld>().Length>0)
-            {
-                _physicalWorld = FindObjectsOfType<PhysicalWorld>()[0];
-            }
-            else
-            {
-                Debug.LogError("You must include at least one Physical World component in the scene");
-            }
         }
 
         private void Update()
@@ -31,7 +22,12 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
 
         public void StartGrabbing()
         {
-            var temp = new List<IGrabbable>(_physicalWorld.GetSoftBodies().ToList());
+            if (PhysicalWorld.instance == null)
+            {
+                Debug.LogError("There is no PhysicalWorld instance in the scene.");
+                return;
+            }
+            var temp = new List<IGrabbable>(PhysicalWorld.instance.GetSoftBodies().ToList());
             _grabber.StartGrab(temp);
         }
 

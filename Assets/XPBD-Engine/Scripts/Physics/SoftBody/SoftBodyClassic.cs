@@ -275,7 +275,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 					if(toSetStatic) continue;
 					switch (staticSide.axis)
 					{
-						case AxisXPBD.X:
+						case StaticAxis.X:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].x>maxX - staticSide.amount)
@@ -291,7 +291,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisXPBD.Y:
+						case StaticAxis.Y:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].y>maxY - staticSide.amount)
@@ -307,7 +307,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 								}
 							}
 							break;
-						case AxisXPBD.Z:
+						case StaticAxis.Z:
 							if (staticSide.isPositiveSide)
 							{
 								if (_pos[i].z>maxZ - staticSide.amount)
@@ -701,7 +701,7 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 }
 
 [Serializable]
-public enum AxisXPBD
+public enum StaticAxis
 {
 	X,
 	Y,
@@ -711,7 +711,7 @@ public enum AxisXPBD
 [Serializable]
 public class StaticSide
 {
-	public AxisXPBD axis;
+	public StaticAxis axis;
 	public bool isPositiveSide;
 	[Range(0f,3f)] public float amount;
 }
