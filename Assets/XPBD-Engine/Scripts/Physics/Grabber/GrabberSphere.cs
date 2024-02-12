@@ -22,7 +22,7 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
             _radius = radius;
         }
 
-        public void StartGrab(List<IGrabbable> bodies)
+        public void StartGrab(List<IGrabbable> bodies,Vector3 colliderPosition)
         {
             if (_grabbedBodyVertex.HasValue) return;
             
@@ -32,7 +32,7 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
             
             foreach (var body in bodies)
             {
-                if (!body.IsSphereInsideBody(_centerPos, _radius, out SphereHit bestVertex)) continue;
+                if (!body.IsSphereInsideBody(colliderPosition, _radius, out SphereHit bestVertex)) continue;
                 if (!(bestVertex.distance < maxDist)) continue;
                 closestBody = body;
                 bestVertexIndex = bestVertex.index;

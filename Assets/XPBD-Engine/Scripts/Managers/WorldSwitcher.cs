@@ -6,6 +6,10 @@ namespace XPBD_Engine.Scripts.Managers
     public class WorldSwitcher : MonoBehaviour
     {
         public List<GameObject> worlds;
+        public List<MeshRenderer> buttonMeshRenderers;
+        public Material activeMaterial;
+        public Material inactiveMaterial;
+        
         private int _currentWorldIndex;
         private void Awake()
         {
@@ -15,6 +19,8 @@ namespace XPBD_Engine.Scripts.Managers
                 world.SetActive(false);
             }
             worlds[_currentWorldIndex].SetActive(true);
+            buttonMeshRenderers[_currentWorldIndex].material = activeMaterial;
+            
             
         }
         private void Update()
@@ -27,19 +33,23 @@ namespace XPBD_Engine.Scripts.Managers
         private void NextWorld()
         {
             worlds[_currentWorldIndex].SetActive(false);
+            buttonMeshRenderers[_currentWorldIndex].material = inactiveMaterial;
             _currentWorldIndex++;
             if (_currentWorldIndex >= worlds.Count)
             {
                 _currentWorldIndex = 0;
             }
             worlds[_currentWorldIndex].SetActive(true);
+            buttonMeshRenderers[_currentWorldIndex].material = activeMaterial;
         }
         
         public void ChangeWorldByIndex(int index)
         {
             worlds[_currentWorldIndex].SetActive(false);
+            buttonMeshRenderers[_currentWorldIndex].material = inactiveMaterial;
             _currentWorldIndex = index;
             worlds[_currentWorldIndex].SetActive(true);
+            buttonMeshRenderers[_currentWorldIndex].material = activeMaterial;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
             
         }
         
-        public void StartGrab(List<IGrabbable> bodies)
+        public void StartGrab(List<IGrabbable> bodies, Vector3 colliderPosition = default)
         {
             if (_grabbedBody != null)
             {

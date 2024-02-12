@@ -1149,12 +1149,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 147700336813110325, guid: 40c48067766ae3c4b8ed647d7d71ad89, type: 3}
       propertyPath: radius
-      value: 0.15
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 742087682498150982, guid: 40c48067766ae3c4b8ed647d7d71ad89, type: 3}
       propertyPath: m_Name
       value: Frittata
       objectReference: {fileID: 0}
+    - target: {fileID: 4849064943134488978, guid: 40c48067766ae3c4b8ed647d7d71ad89, type: 3}
+      propertyPath: modelJson
+      value: 
+      objectReference: {fileID: 4900000, guid: 112ee6925da2c9348998ddbf7158a037, type: 3}
     - target: {fileID: 6377301098932930404, guid: 40c48067766ae3c4b8ed647d7d71ad89, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.1507207

@@ -338,7 +338,10 @@ namespace XPBD_Engine.Scripts.Physics.SoftBody
 			for (var i = 0; i < _numParticles; i++) {
 				//This means the particle is fixed, so don't simulate it
 				if (IsVertexStatic(i))
+				{
+					EnvironmentCollision(boundType,i,worldBoundSize,worldBoundCenter,worldSphereRadius,worldCapsulePos1,worldCapsulePos2);
 					continue;
+				}
 				//Update vel
 				_vel[i] += gravity * dt;
 				//Save old pos

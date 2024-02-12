@@ -5,7 +5,7 @@ namespace XPBD_Engine.Scripts.Physics.Grabber.Interfaces
 {
     public interface IGrabber
     {
-         void StartGrab(List<IGrabbable> bodies);
+         void StartGrab(List<IGrabbable> bodies,Vector3 colliderPosition);
 
          void MoveGrab(Vector3 position);
 
