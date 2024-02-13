@@ -16,11 +16,7 @@ namespace XPBD_Engine.Scripts.Managers
      */
     public class ActivityManager : MonoBehaviour
     {
-        private static readonly Color NormalColor = new Color(1f, 1f, 1f, 0.3f);
-        private static readonly Color ConfirmedColor = new Color(0f, 1f, 0f, 0.3f);
-        private static readonly Color ErrorColor = new Color(1f, 1f, 0f, 0.3f);
-        private const float AlphaNormalColor = 0.3f;
-        private const float AlphaNearColor = 0.1f;
+  
         
         public static ActivityManager instance;
         public string activityName;                             //The name of the activity
@@ -38,15 +34,15 @@ namespace XPBD_Engine.Scripts.Managers
         private AudioSource _audioSource;                       //The audio source of the activity
         private List<int> _vertexIndices;                       //The vertex indices
         private bool _isActivityRunning;                        //If the activity is running
-        private GameObject _selectionSphere;                    //The sphere that will be used to select the vertices
-        private MeshRenderer _selectionSphereMeshRenderer;      //The mesh renderer of the selection sphere
-        private int _currentSelectedVertexIndex;                //The index of the current selected vertex
-        private bool _isGrabberNearVertex;                      //If the grabber is near the vertex
-        private GrabberSphereController[] _grabbers;            //The grabbers that will be used to grab the vertices
+        
+        private SelectionSphere _selectionSphere;                    //The sphere that will be used to select the vertices
         private Vector3 _currentSelectedVertexPos;              //The position of the current selected vertex
-        private Color _currentColor;                            //The current color of the selection sphere
-        private bool _isPlayingErrorColorCoroutine;             //If the error color coroutine is playing
-        private bool _isPlayingConfirmedColorCoroutine;         //If the confirmed color coroutine is playing
+        
+        private int _currentSelectedVertexIndex;                //The index of the current selected vertex
+        
+        
+        private GrabberSphereController[] _grabbers;            //The grabbers that will be used to grab the vertices
+        private bool _isPlayingConfirmedCoroutine;         //If the confirmed color coroutine is playing
         private List<SelectedVertexInfo> _selectedVertexInfos;  //The selected vertex infos
         private List<GrabbedVertexInfo> _grabbedVertexInfos;    //The grabbed vertex infos
         private SelectedVertexInfo _currentSelectedVertexInfo;  //The current selected vertex info
@@ -72,33 +68,28 @@ namespace XPBD_Engine.Scripts.Managers
         private void Update()
         {
             if (!_isActivityRunning) return;
-            MoveSelectionSphere(_currentSelectedVertexPos);
+            _selectionSphere.Move(_currentSelectedVertexPos);
         }
 
         private void FixedUpdate()
         {
             if (!_isActivityRunning) return;
             _currentSelectedVertexPos = softbodyActivity.GetVertexPos(_vertexIndices[_currentSelectedVertexIndex]);
-            
-            CheckGrabberNearVertex();
+            _selectionSphere.SetNearVertex(CheckGrabberNearVertex(_currentSelectedVertexPos));
         }
         
-        private void CheckGrabberNearVertex()
+        private bool CheckGrabberNearVertex(Vector3 vertexPos)
         {
-            if (!_isActivityRunning) return;
-            
-            var previousIsGrabberNearVertex = _isGrabberNearVertex;
+            var isNear = false;
             foreach (var grabber in _grabbers)
             {
-                if (Vector3.Distance(grabber.transform.position, _currentSelectedVertexPos) <= activitySettings.grabbingDistance)
+                if (Vector3.Distance(grabber.transform.position, vertexPos) <= activitySettings.grabbingDistance)
                 {
-                    _isGrabberNearVertex = true;
+                    isNear = true;
                     break;
                 }
-                _isGrabberNearVertex = false;
             }
-            if(previousIsGrabberNearVertex != _isGrabberNearVertex)
-                SetCurrentSphereAlpha(_isGrabberNearVertex ? AlphaNearColor : AlphaNormalColor);
+            return isNear;
         }
 
         
@@ -114,6 +105,9 @@ namespace XPBD_Engine.Scripts.Managers
                     _vertexIndices = new List<int>(activitySettings.vertexIndices);
                     ListUtilityFunctions.Shuffle(_vertexIndices);
                     break;
+                case ActivityType.Double:
+                    _vertexIndices = new List<int>(activitySettings.vertexIndices);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -124,11 +118,10 @@ namespace XPBD_Engine.Scripts.Managers
             startButtonMeshRenderer.material = startButtonActiveMaterial;
             
             _currentSelectedVertexPos = softbodyActivity.GetVertexPos(_vertexIndices[_currentSelectedVertexIndex]);
+            
             HandleInitSelectionSphere(_currentSelectedVertexPos);
             
-
             _isActivityRunning = true; 
-            
             
             minigameManager.Init();
         }
@@ -169,34 +162,19 @@ namespace XPBD_Engine.Scripts.Managers
         #region SelectionSphere
         private void HandleInitSelectionSphere(Vector3 initPos)
         {
-            _selectionSphere = Instantiate(selectionSpherePrefab, initPos, Quaternion.identity);
-            _selectionSphereMeshRenderer = _selectionSphere.GetComponent<MeshRenderer>(); 
-            _selectionSphere.transform.localScale = Vector3.one * (activitySettings.grabbingDistance * 2f); 
-            SetCurrentSphereColor(NormalColor);
+            _selectionSphere = Instantiate(selectionSpherePrefab, initPos, Quaternion.identity).GetComponent<SelectionSphere>();
+            _selectionSphere.SetRadius(activitySettings.grabbingDistance); 
         }
-        private void MoveSelectionSphere(Vector3 newPos)
-        {
-            _selectionSphere.transform.position = newPos;
-        }
+        
         private void HandleEndSelectionSphere()
         {
-            Destroy(_selectionSphere);
-        }
-        private void SetCurrentSphereColor(Color color)
-        {
-            _currentColor = color;
-            _selectionSphereMeshRenderer.material.color = color;
-        }
-        private void SetCurrentSphereAlpha(float alpha)
-        {
-            _currentColor.a = alpha;
-            _selectionSphereMeshRenderer.material.color = _currentColor;
+            Destroy(_selectionSphere.gameObject);
+            _selectionSphere = null;
         }
         #endregion
 
         private void HandleEndActivity(bool solved)
         {
-            
             HandleEndSelectionSphere();
             startButtonMeshRenderer.material = startButtonInactiveMaterial;
             
@@ -218,7 +196,6 @@ namespace XPBD_Engine.Scripts.Managers
             if (_currentSelectedVertexIndex >= _vertexIndices.Count)
             {
                 HandleEndActivity(true);
-
             }
             else
             {
@@ -231,7 +208,7 @@ namespace XPBD_Engine.Scripts.Managers
         public void StartGrabbingVertex(int index)
         {
             if (!_isActivityRunning) return;
-            if(_isPlayingConfirmedColorCoroutine) return;
+            if(_isPlayingConfirmedCoroutine) return;
             
             var dist  = Vector3.Distance(softbodyActivity.GetVertexPos(_vertexIndices[_currentSelectedVertexIndex]), softbodyActivity.GetVertexPos(index));
             if (dist <= activitySettings.grabbingDistance)
@@ -246,11 +223,6 @@ namespace XPBD_Engine.Scripts.Managers
         }
         private void HandleValidGrabbedVertex(int grabbedVertexIndex, float dist)
         {
-            if (_isPlayingErrorColorCoroutine)
-            {
-                StopAllCoroutines();
-                _isPlayingErrorColorCoroutine = false;
-            }
             AddGrabbedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], grabbedVertexIndex, true, dist, DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
             _audioSource.PlayOneShot(confirmClip);
             StartCoroutine(ChangeGrabbedVertexCoroutine(1f));
@@ -259,25 +231,18 @@ namespace XPBD_Engine.Scripts.Managers
         {
             AddGrabbedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], grabbedVertexIndex, false, dist, DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
             _audioSource.PlayOneShot(errorClip);
-            StartCoroutine(ChangeErrorColorCoroutine(2f));
+            _selectionSphere.SetError(2f);
             minigameManager.NotifyError();
         }
-        private IEnumerator ChangeErrorColorCoroutine(float duration)
+     
+        private IEnumerator ChangeGrabbedVertexCoroutine(float duration )
         {
-            _isPlayingErrorColorCoroutine = true;
-            SetCurrentSphereColor(ErrorColor);
-            yield return new WaitForSeconds(duration);
-            SetCurrentSphereColor(NormalColor);
-            _isPlayingErrorColorCoroutine = false;
-        }
-        private IEnumerator ChangeGrabbedVertexCoroutine(float duration)
-        {
-            _isPlayingConfirmedColorCoroutine = true;
-            SetCurrentSphereColor(ConfirmedColor);
+            _isPlayingConfirmedCoroutine = true;
+            _selectionSphere.SetConfirmed(true);
             yield return new WaitForSeconds(duration);
             ChangeGrabbedVertex();
-            SetCurrentSphereColor(NormalColor);
-            _isPlayingConfirmedColorCoroutine = false;
+            _selectionSphere.SetConfirmed(false);
+            _isPlayingConfirmedCoroutine = false;
         }
         
         //Public method to start the activity
@@ -296,24 +261,7 @@ namespace XPBD_Engine.Scripts.Managers
                 HandleEndActivity(false);
             }
         }
-        //Handle the error messages
-        private void HandleErrors()
-        {
-            if (softbodyActivity == null)
-            {
-                Debug.LogError("You must include a softbody to the activity manager");
-            }
-
-            if (activitySettings == null)
-            {
-                Debug.LogError("You must include a activity settings to the activity manager");
-            }
         
-            if(selectionSpherePrefab == null)
-            {
-                Debug.LogError("You must include a selection sphere prefab to the activity manager");
-            }
-        }
         
         public void  ChangeActivityType(ActivityType type, out ActivityType activity)
         {
@@ -343,7 +291,24 @@ namespace XPBD_Engine.Scripts.Managers
             return name;
         }
         
+        //Handle the error messages
+        private void HandleErrors()
+        {
+            if (softbodyActivity == null)
+            {
+                Debug.LogError("You must include a softbody to the activity manager");
+            }
+
+            if (activitySettings == null)
+            {
+                Debug.LogError("You must include a activity settings to the activity manager");
+            }
         
+            if(selectionSpherePrefab == null)
+            {
+                Debug.LogError("You must include a selection sphere prefab to the activity manager");
+            }
+        }
         
         
     }
@@ -384,4 +349,5 @@ public enum ActivityType
 {
     Ordered,
     Random,
+    Double
 }
