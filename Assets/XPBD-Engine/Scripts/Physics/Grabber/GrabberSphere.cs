@@ -71,8 +71,14 @@ namespace XPBD_Engine.Scripts.Physics.Grabber
                 var vel = (position - _lastGrabPos).magnitude / Time.deltaTime;
                 var dir = (position - _lastGrabPos).normalized;
 
+                if (ActivityManager.instance != null)
+                {
+                    ActivityManager.instance.EndGrabbingVertex(_grabbedBodyVertex.Value.indexVertex);
+                }
+                
                 _grabbedBodyVertex.Value.grabbedBody.EndGrab(position, dir * vel,_grabbedBodyVertex.Value.indexVertex);
                 _grabbedBodyVertex = null;
+                
             }
 
            

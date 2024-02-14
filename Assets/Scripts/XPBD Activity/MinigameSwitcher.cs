@@ -9,6 +9,7 @@ namespace XPBD_Activity
         [SerializeField] private ActivityManager activityManager;
         [SerializeField] private MeshRenderer buttonOrderedMeshRenderers;
         [SerializeField] private MeshRenderer buttonRandomMeshRenderers;
+        [SerializeField] private MeshRenderer buttonDoubleMeshRenderers;
         [SerializeField] private Material activeMaterial;
         [SerializeField] private Material inactiveMaterial;
         
@@ -24,11 +25,19 @@ namespace XPBD_Activity
             {
                 buttonOrderedMeshRenderers.material = activeMaterial;
                 buttonRandomMeshRenderers.material = inactiveMaterial;
+                buttonDoubleMeshRenderers.material = inactiveMaterial;
             }
-            else
+            else if (activityType == ActivityType.Random)
             {
                 buttonRandomMeshRenderers.material = activeMaterial;
                 buttonOrderedMeshRenderers.material = inactiveMaterial;
+                buttonDoubleMeshRenderers.material = inactiveMaterial;
+            }
+            else if (activityType == ActivityType.Double)
+            {
+                buttonDoubleMeshRenderers.material = activeMaterial;
+                buttonOrderedMeshRenderers.material = inactiveMaterial;
+                buttonRandomMeshRenderers.material = inactiveMaterial;
             }
         }
         public void ClickOrderedButton()
@@ -38,6 +47,10 @@ namespace XPBD_Activity
         public void ClickRandomButton()
         {
             ChangeActivityType(ActivityType.Random);
+        }
+        public void ClickDoubleButton()
+        {
+            ChangeActivityType(ActivityType.Double);
         }
         
         public void ChangeActivityType(ActivityType activityType)

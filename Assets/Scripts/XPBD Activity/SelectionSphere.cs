@@ -26,7 +26,6 @@ namespace XPBD_Activity
         {
             gameObject.transform.position = newPos;
         }
-
         public void SetRadius(float radius)
         {
             gameObject.transform.localScale =  Vector3.one * (radius * 2f);
@@ -41,16 +40,7 @@ namespace XPBD_Activity
                 SetCurrentSphereAlpha(_isGrabberNearVertex? AlphaNearColor : AlphaNormalColor);
             }
         }
-        private void SetCurrentSphereColor(Color color)
-        {
-            _currentColor = color;
-            _selectionSphereMeshRenderer.material.color = color;
-        }
-        private void SetCurrentSphereAlpha(float alpha)
-        {
-            _currentColor.a = alpha;
-            _selectionSphereMeshRenderer.material.color = _currentColor;
-        }  
+        
         public void SetConfirmed(bool isConfirmed)
         {
             StopError();
@@ -72,7 +62,16 @@ namespace XPBD_Activity
                 _isPlayingErrorColorCoroutine = false;
             }
         }
-        
+        private void SetCurrentSphereColor(Color color)
+                {
+                    _currentColor = color;
+                    _selectionSphereMeshRenderer.material.color = color;
+                } 
+        private void SetCurrentSphereAlpha(float alpha)
+                {
+                    _currentColor.a = alpha;
+                    _selectionSphereMeshRenderer.material.color = _currentColor;
+                }  
         
         private IEnumerator ChangeErrorColorCoroutine(float duration)
         {

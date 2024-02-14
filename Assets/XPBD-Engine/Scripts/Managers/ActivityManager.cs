@@ -35,17 +35,23 @@ namespace XPBD_Engine.Scripts.Managers
         private List<int> _vertexIndices;                       //The vertex indices
         private bool _isActivityRunning;                        //If the activity is running
         
-        private SelectionSphere _selectionSphere;                    //The sphere that will be used to select the vertices
+        private SelectionSphere _selectionSphere;               //The sphere that will be used to select the vertices
         private Vector3 _currentSelectedVertexPos;              //The position of the current selected vertex
-        
         private int _currentSelectedVertexIndex;                //The index of the current selected vertex
-        
+
+        private bool _isPreviousGrabbed;
+        private SelectionSphere _previousGrabbedSphere;   
+        private Vector3 _previousGrabbedVertexPos; 
+        private int _previousGrabbedVertexIndex;
+                    
         
         private GrabberSphereController[] _grabbers;            //The grabbers that will be used to grab the vertices
-        private bool _isPlayingConfirmedCoroutine;         //If the confirmed color coroutine is playing
+        private bool _isPlayingConfirmedCoroutine;              //If the confirmed color coroutine is playing
         private List<SelectedVertexInfo> _selectedVertexInfos;  //The selected vertex infos
         private List<GrabbedVertexInfo> _grabbedVertexInfos;    //The grabbed vertex infos
         private SelectedVertexInfo _currentSelectedVertexInfo;  //The current selected vertex info
+
+        private SelectedVertexInfo _nextSelectedVertexInfoDouble;
         
         
         private void Awake()
@@ -69,6 +75,11 @@ namespace XPBD_Engine.Scripts.Managers
         {
             if (!_isActivityRunning) return;
             _selectionSphere.Move(_currentSelectedVertexPos);
+
+            if (activityType == ActivityType.Double &&  _previousGrabbedSphere != null)
+            {
+                _previousGrabbedSphere.Move(_previousGrabbedVertexPos);
+            }
         }
 
         private void FixedUpdate()
@@ -76,6 +87,11 @@ namespace XPBD_Engine.Scripts.Managers
             if (!_isActivityRunning) return;
             _currentSelectedVertexPos = softbodyActivity.GetVertexPos(_vertexIndices[_currentSelectedVertexIndex]);
             _selectionSphere.SetNearVertex(CheckGrabberNearVertex(_currentSelectedVertexPos));
+            
+            if (activityType == ActivityType.Double &&  _previousGrabbedSphere != null)
+            {
+                _previousGrabbedVertexPos = softbodyActivity.GetVertexPos(_previousGrabbedVertexIndex);
+            }
         }
         
         private bool CheckGrabberNearVertex(Vector3 vertexPos)
@@ -111,7 +127,7 @@ namespace XPBD_Engine.Scripts.Managers
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+            _isPreviousGrabbed = false;
             
             _currentSelectedVertexIndex = 0;
             HandleInitInfos();
@@ -165,17 +181,36 @@ namespace XPBD_Engine.Scripts.Managers
             _selectionSphere = Instantiate(selectionSpherePrefab, initPos, Quaternion.identity).GetComponent<SelectionSphere>();
             _selectionSphere.SetRadius(activitySettings.grabbingDistance); 
         }
-        
+        private void HandleInitPreviousSelectionSphere(Vector3 initPos)
+        {
+            _previousGrabbedSphere = Instantiate(selectionSpherePrefab, initPos, Quaternion.identity).GetComponent<SelectionSphere>();
+            _previousGrabbedSphere.SetRadius(activitySettings.grabbingDistance/2); 
+            _previousGrabbedSphere.SetConfirmed(true);
+        }
         private void HandleEndSelectionSphere()
         {
             Destroy(_selectionSphere.gameObject);
             _selectionSphere = null;
+        }
+        private void HandleRemovePreviousGrabbedSphere()
+        {
+            if (_previousGrabbedSphere != null)
+            {
+                Destroy(_previousGrabbedSphere.gameObject);
+                _previousGrabbedSphere = null;
+            }
         }
         #endregion
 
         private void HandleEndActivity(bool solved)
         {
             HandleEndSelectionSphere();
+            
+            if (activityType == ActivityType.Double)
+            {
+                HandleRemovePreviousGrabbedSphere();
+                _isPreviousGrabbed = false;
+            }
             startButtonMeshRenderer.material = startButtonInactiveMaterial;
             
             if(solved)
@@ -187,7 +222,7 @@ namespace XPBD_Engine.Scripts.Managers
         }
         
         //Handle the change of the grabbed vertex
-        private void ChangeGrabbedVertex()
+        private void ChangeGrabbedVertex(int grabbedIndex)
         {
             AddSelectedVertexInfo(DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
             
@@ -200,6 +235,14 @@ namespace XPBD_Engine.Scripts.Managers
             else
             {
                 NewSelectedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
+                if (activityType == ActivityType.Double)
+                {
+                    _isPreviousGrabbed = true;
+                    _previousGrabbedVertexIndex =grabbedIndex ;
+                    HandleRemovePreviousGrabbedSphere();
+                    _previousGrabbedVertexPos = softbodyActivity.GetVertexPos(_previousGrabbedVertexIndex);
+                    HandleInitPreviousSelectionSphere(_previousGrabbedVertexPos);
+                }
             }
         }
         
@@ -221,11 +264,34 @@ namespace XPBD_Engine.Scripts.Managers
             }
             
         }
+
+        public void EndGrabbingVertex(int index)
+        {
+            if (!_isActivityRunning) return;
+            if(activityType != ActivityType.Double) return;
+            
+            if (_isPreviousGrabbed && index == _previousGrabbedVertexIndex)
+            {
+                _isPreviousGrabbed = false;
+                Destroy(_previousGrabbedSphere.gameObject);
+                _previousGrabbedSphere = null;
+
+                _currentSelectedVertexIndex--;
+
+            }
+        }
         private void HandleValidGrabbedVertex(int grabbedVertexIndex, float dist)
         {
             AddGrabbedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], grabbedVertexIndex, true, dist, DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
             _audioSource.PlayOneShot(confirmClip);
-            StartCoroutine(ChangeGrabbedVertexCoroutine(1f));
+            if (activityType == ActivityType.Double)
+            {
+                ChangeGrabbedVertex(grabbedVertexIndex);
+            }
+            else
+            {
+                StartCoroutine(ChangeGrabbedVertexCoroutine( 1f,grabbedVertexIndex));
+            }
         }
         private void HandleInvalidGrabbedVertex(int grabbedVertexIndex, float dist)
         {
@@ -235,14 +301,15 @@ namespace XPBD_Engine.Scripts.Managers
             minigameManager.NotifyError();
         }
      
-        private IEnumerator ChangeGrabbedVertexCoroutine(float duration )
+        private IEnumerator ChangeGrabbedVertexCoroutine(float duration, int grabbedVertex )
         {
             _isPlayingConfirmedCoroutine = true;
             _selectionSphere.SetConfirmed(true);
             yield return new WaitForSeconds(duration);
-            ChangeGrabbedVertex();
             _selectionSphere.SetConfirmed(false);
             _isPlayingConfirmedCoroutine = false;
+            ChangeGrabbedVertex(grabbedVertex);
+            
         }
         
         //Public method to start the activity
@@ -283,6 +350,9 @@ namespace XPBD_Engine.Scripts.Managers
                     
                 case ActivityType.Random:
                     name += "_Random";
+                    break;
+                case ActivityType.Double:
+                    name += "_Double";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
