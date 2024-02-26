@@ -51,7 +51,6 @@ namespace XPBD_Engine.Scripts.Managers
         private List<GrabbedVertexInfo> _grabbedVertexInfos;    //The grabbed vertex infos
         private SelectedVertexInfo _currentSelectedVertexInfo;  //The current selected vertex info
 
-        private SelectedVertexInfo _nextSelectedVertexInfoDouble;
         
         
         private void Awake()
@@ -224,18 +223,21 @@ namespace XPBD_Engine.Scripts.Managers
         //Handle the change of the grabbed vertex
         private void ChangeGrabbedVertex(int grabbedIndex)
         {
-            AddSelectedVertexInfo(DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
-            
             _currentSelectedVertexIndex++;
             
             if (_currentSelectedVertexIndex >= _vertexIndices.Count)
             {
+                AddSelectedVertexInfo(DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
                 HandleEndActivity(true);
             }
             else
             {
-                NewSelectedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
-                if (activityType == ActivityType.Double)
+                if (_currentSelectedVertexInfo.vertexIndex!=_vertexIndices[_currentSelectedVertexIndex])
+                {
+                    AddSelectedVertexInfo(DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
+                    NewSelectedVertexInfo( _vertexIndices[_currentSelectedVertexIndex], DateTime.Now.ToString(XPBDExerciseLogger.Instance.cultureInfo));
+                }
+                if (activityType == ActivityType.Double) 
                 {
                     _isPreviousGrabbed = true;
                     _previousGrabbedVertexIndex =grabbedIndex ;
