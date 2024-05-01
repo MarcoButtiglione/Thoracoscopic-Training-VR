@@ -24,14 +24,13 @@ namespace XPBD_Engine.Scripts.Physics
         public int numSubsteps = 10;                    //The number of substeps
         public bool paused;                             //If the simulation is paused
         
-        private SoftBodyClassic[] _classicSoftBodies;
-        //private SoftBodyAdvanced[] _advancedSoftBodies;
-        //private Ball[] _balls;
+        private SoftBodyClassic[] _softBodies;          //The softbodies in the world
+
         
         private void OnEnable()
         {
             instance = this;
-            _classicSoftBodies = FindObjectsOfType<SoftBodyClassic>();
+            _softBodies = FindObjectsOfType<SoftBodyClassic>();
         }
         private void OnDisable()
         {
@@ -46,7 +45,7 @@ namespace XPBD_Engine.Scripts.Physics
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
-                foreach (var softBody in _classicSoftBodies)
+                foreach (var softBody in _softBodies)
                 {
                     softBody.RestartSoftBody();
                 }
@@ -84,58 +83,29 @@ namespace XPBD_Engine.Scripts.Physics
             if (paused)
                 return;
             
-            
-            
             var sdt = Time.fixedDeltaTime / numSubsteps;
-            HandleSimulationSoftBodyClassic(sdt);
-            //HandleSimulationSoftBodyAdvanced(sdt);
-            //HandleSimulationBalls();
+            HandleSimulationSoftBody(sdt);
+
         }
-        private void HandleSimulationSoftBodyClassic(float sdt)
+        private void HandleSimulationSoftBody(float sdt)
         {
-            if (_classicSoftBodies.Length ==0)
+            if (_softBodies.Length ==0)
                 return;
             for (var step = 0; step < numSubsteps; step++) {
-                for (var i = 0; i < _classicSoftBodies.Length; i++) 
-                    _classicSoftBodies[i].PreSolve(sdt, gravity,worldBoundType,worldBoundCenter,worldBoundSize,worldBoundRadius,worldCapsulePos1,worldCapsulePos2);
+                for (var i = 0; i < _softBodies.Length; i++) 
+                    _softBodies[i].PreSolve(sdt, gravity,worldBoundType,worldBoundCenter,worldBoundSize,worldBoundRadius,worldCapsulePos1,worldCapsulePos2);
 					
-                for (var i = 0; i < _classicSoftBodies.Length; i++) 
-                    _classicSoftBodies[i].Solve(sdt);
+                for (var i = 0; i < _softBodies.Length; i++) 
+                    _softBodies[i].Solve(sdt);
 
-                for (var i = 0; i < _classicSoftBodies.Length; i++) 
-                    _classicSoftBodies[i].PostSolve(sdt);
+                for (var i = 0; i < _softBodies.Length; i++) 
+                    _softBodies[i].PostSolve(sdt);
             }
         }
-        /*
-         
-        private void HandleSimulationSoftBodyAdvanced(float sdt)
-        {
-            if (_advancedSoftBodies.Length ==0)
-                return;
-            for (var step = 0; step < numSubsteps; step++) {
-                for (var i = 0; i < _advancedSoftBodies.Length; i++) 
-                    _advancedSoftBodies[i].PreSolve(sdt, gravity,worldBoundSize,worldBoundCenter);
-					
-                for (var i = 0; i < _advancedSoftBodies.Length; i++) 
-                    _advancedSoftBodies[i].Solve(sdt);
 
-                for (var i = 0; i < _advancedSoftBodies.Length; i++) 
-                    _advancedSoftBodies[i].PostSolve(sdt);
-            }
-            //for (var i = 0; i < _advancedSoftBodies.Length; i++) 
-            //    _advancedSoftBodies[i].UpdateMeshes();
-        }
-        private void HandleSimulationBalls()
-        {
-            if (_balls.Length ==0)
-                return;
-            for (var i = 0; i < _balls.Length; i++)
-                _balls[i].Simulate(gravity,Time.fixedDeltaTime,worldBoundSize);
-        }
-        */
         public IEnumerable<SoftBodyClassic> GetSoftBodies()
         {
-            return _classicSoftBodies;
+            return _softBodies;
         }
 
         public void SwitchPaused()
