@@ -29,10 +29,16 @@ The platform was evaluated in collaboration with thoracic surgery residents at t
 - Longitudinal studies to compare VR training effectiveness with traditional methods.
 
 ## Contributors
-
-- **Author**: Marco Domenico Buttiglione
-- **Advisor**: Prof. Marco Gribaudo
-- **Co-advisor**: Dott. Francesco Guerrera
+- Marco Domenico Buttiglione - Politecnico di Milano
+- Francesco Guerrera - Università di Torino
+- Pietro Piazzolla - Politecnico di Milano
+- Giorgio Colombo - Politecnico di Milano
+- Marco Gribaudo - Politecnico di Milano
 
 ## Acknowledgments
-This project was developed as part of a Master's thesis in Computer Science and Engineering at Politecnico di Milano, in collaboration with the University of Turin.
+This project was developed in collaboration between Politecnico di Milano and the University of Turin. We thank all the thoracic surgery residents who participated in our study and provided valuable feedback.
+
+For more detailed information, please refer to our paper:
+
+Buttiglione, M.D., Guerrera, F., Piazzolla, P., Colombo, G., and Gribaudo, M. (2024). Lung Operation Training in Low-Cost Virtual Reality Simulation Environments. In Proceedings of the European Council for Modelling and Simulation (ECMS 2024). DOI: [10.7148/2024-0536](https://doi.org/10.7148/2024-0536)
+
