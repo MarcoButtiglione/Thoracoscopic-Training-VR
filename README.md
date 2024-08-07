@@ -45,7 +45,7 @@ The platform was evaluated in collaboration with thoracic surgery residents at t
 ## Acknowledgments
 This project was developed in collaboration between Politecnico di Milano and the University of Turin. We thank all the thoracic surgery residents who participated in our study and provided valuable feedback.
 
-For more detailed information, please refer to our paper:
+For more detailed information, please refer to our paper and the [demo video](https://www.youtube.com/watch?v=PSc5dPDgTFM).
 
 Buttiglione, M.D., Guerrera, F., Piazzolla, P., Colombo, G., and Gribaudo, M. (2024). Lung Operation Training in Low-Cost Virtual Reality Simulation Environments. In Proceedings of the European Council for Modelling and Simulation (ECMS 2024). DOI: [10.7148/2024-0536](https://doi.org/10.7148/2024-0536)
 
